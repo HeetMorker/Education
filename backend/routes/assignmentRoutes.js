@@ -6,7 +6,6 @@ const router = express.Router();
 
 // Multer for file upload
 const upload = multer({ dest: 'uploads/assignments/' });
-
 router.post('/upload', protect, authorize('Student'), upload.single('assignment'), uploadAssignment);
 
 module.exports = router;

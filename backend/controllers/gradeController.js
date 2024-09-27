@@ -47,3 +47,43 @@ exports.viewGrades = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+
+
+
+exports.submitGrade = async (req, res) => {
+  const { courseId, studentId, grade } = req.body;
+
+  try {
+    // Ensure that the teacher is assigned to the course
+    const course = await Course.findById(courseId);
+    if (!course || String(course.assignedTeacher) !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to grade this course' });
+    }
+
+    // Create or update the grade for the student
+    let gradeRecord = await Grade.findOne({ course: courseId, student: studentId });
+    if (!gradeRecord) {
+      gradeRecord = new Grade({ course: courseId, student: studentId, grade });
+    } else {
+      gradeRecord.grade = grade;
+    }
+
+    await gradeRecord.save();
+    res.status(200).json({ message: 'Grade submitted successfully', grade: gradeRecord });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
+// Get all grades for a specific course (Teacher/Admin)
+exports.getGradesByCourse = async (req, res) => {
+  const { courseId } = req.params;
+
+  try {
+    const grades = await Grade.find({ course: courseId }).populate('student', 'name email');
+    res.status(200).json(grades);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};

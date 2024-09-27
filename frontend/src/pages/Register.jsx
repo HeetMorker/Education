@@ -7,6 +7,7 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [role, setRole] = useState(''); // Add role selection
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -14,9 +15,10 @@ const Register = () => {
     setError('');
 
     const userData = {
-      username: name,
+      name: name,
       email,
-      password
+      password,
+      role, // Include role in the registration request
     };
 
     try {
@@ -61,6 +63,7 @@ const Register = () => {
                     onChange={(e) => setName(e.target.value)}
                     className="form-control"
                     placeholder="Your Name"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -71,6 +74,7 @@ const Register = () => {
                     onChange={(e) => setEmail(e.target.value)} 
                     className="form-control"
                     placeholder="Email Address"
+                    required
                   />
                 </div>
                 <div className="mb-3">
@@ -81,7 +85,23 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)} 
                     placeholder="Password"
+                    required
                   />
+                </div>
+
+                <div className="mb-3">
+                  <label>Select Role</label>
+                  <select
+                    className="form-control"
+                    value={role}
+                    onChange={(e) => setRole(e.target.value)}
+                    required
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="Teacher">Teacher</option>
+                    <option value="Student">Student</option>
+                  </select>
                 </div>
                 
                 <div className="flex mt-1 justify-between items-center flex-wrap">
@@ -91,6 +111,7 @@ const Register = () => {
                       type="checkbox"
                       id="customCheckc1"
                       defaultChecked
+                      required
                     /> 
                     <label className="form-check-label text-muted" htmlFor="customCheckc1">
                       I agree to all the Terms & Conditions

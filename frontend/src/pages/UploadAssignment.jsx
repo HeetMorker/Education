@@ -3,11 +3,10 @@ import axios from 'axios';
 import { useParams } from 'react-router-dom';
 
 const UploadAssignment = () => {
-  const { courseId } = useParams(); // Get the courseId from the URL
+  const { courseId } = useParams();
   const [file, setFile] = useState(null);
-  const [description, setDescription] = useState('');
-  const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [error, setError] = useState('');
 
   const handleFileChange = (e) => {
     setFile(e.target.files[0]);
@@ -15,30 +14,20 @@ const UploadAssignment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    // Create a FormData object to send the file
     const formData = new FormData();
     formData.append('assignment', file);
-    formData.append('description', description);
-    formData.append('courseId', courseId);
 
     try {
       const token = localStorage.getItem('token');
 
-      const response = await axios.post(`http://localhost:5000/api/assignments/upload`, formData, {
+      await axios.post(`http://localhost:5000/api/courses/${courseId}/upload-assignment`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
-        },
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
-      if (response.data) {
-        setSuccess('Assignment uploaded successfully!');
-        setFile(null);
-        setDescription('');
-      }
+      setSuccess('Assignment uploaded successfully');
     } catch (error) {
       setError('Failed to upload assignment. Please try again.');
     }
@@ -47,29 +36,16 @@ const UploadAssignment = () => {
   return (
     <div className="pc-container">
       <div className="pc-content">
-        <div className="page-header">
-          <h2>Upload Assignment</h2>
-        </div>
-        <form onSubmit={handleSubmit} encType="multipart/form-data">
+        <h2>Upload Assignment</h2>
+        <form onSubmit={handleSubmit}>
           <div className="mb-3">
-            <label className="form-label">Assignment File:</label>
-            <input type="file" className="form-control" onChange={handleFileChange} required />
+            <label className="form-label">Select Assignment</label>
+            <input type="file" className="form-control" onChange={handleFileChange} />
           </div>
-          <div className="mb-3">
-            <label className="form-label">Description:</label>
-            <textarea
-              className="form-control"
-              placeholder="Enter description"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            ></textarea>
-          </div>
-          <button type="submit" className="btn btn-primary">Upload</button>
+          <button type="submit" className="btn btn-primary">Submit Assignment</button>
         </form>
-
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
-        {success && <div className="alert alert-success mt-3">{success}</div>}
+        {success && <div className="alert alert-success">{success}</div>}
+        {error && <div className="alert alert-danger">{error}</div>}
       </div>
     </div>
   );

@@ -18,16 +18,18 @@ const Login = () => {
       const response = await axios.post('http://localhost:5000/api/auth/login', loginData);
       
       if (response.data) {
-        localStorage.setItem('token', response.data.token);  // Store token
-        localStorage.setItem('role', response.data.role);    // Store role
+        localStorage.setItem('token', response.data.token); 
+        localStorage.setItem('role', response.data.role);   
+        console.log(response.data.role)
+        // navigate('/'); 
 
         // Redirect based on the user's role
         if (response.data.role === 'Admin') {
-          navigate('/home');  // Redirect to admin dashboard
+          navigate('/'); 
         } else if (response.data.role === 'Teacher') {
-          navigate('/view-courses');  // Redirect to view courses for teachers
+          navigate('/view-courses');  
         } else if (response.data.role === 'Student') {
-          navigate('/upload-assignment');  // Redirect to student assignments page
+          navigate('/view-courses');  
         }
       }
     } catch (error) {
